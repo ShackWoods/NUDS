@@ -13,7 +13,7 @@ def get_files(folder: str) -> list:
 def parse_files(folder: str) -> list:
     files = get_files(folder)
     results = []
-    sections = ["Pre-Reading","Notes","Post-Reading","References"]
+    sections = ["Pre-Reading","Notes","Exercises","Post-Reading","References"]
     for file in files:
         filename = file.split("\\")[1][:-5]
         content = docx2txt.process(file) ###[1]
@@ -32,28 +32,27 @@ def parse_files(folder: str) -> list:
         topics = clean_topic_line.split(", ")
         results.append((date_val, filename, clean_date_line, lecturers, topics))
     results.sort(key=lambda x: x[0]) ###[3]
-    print(f"{folder} has been compiled")
     return results
 
-folders = get_folders()
-compilation = []
-for folder in folders:
-    results = parse_files(folder)
-    topic_file = f"{folder}/Topics.txt"
-    folder_compilation = [f"{folder}:\n"]
-    with open(topic_file, "w") as f: ###[4]
-        f.write(f"{folder}:\n")
-        for _, filename, date, lecturers, topics in results:
-            line = f"{filename}: Date = {date}, Taught by {lecturers}, Covered {topics}\n"
-            f.write(line)
-            folder_compilation.append(line)
-    folder_compilation.append("---<END OF FOLDER>---\n")
-    compilation.append("".join(folder_compilation))
+def extract_topics():
+    folders = get_folders()
+    folders.remove("__pycache__")
+    compilation = []
+    for folder in folders:
+        results = parse_files(folder)
+        topic_file = f"{folder}/Topics.txt"
+        folder_compilation = [f"{folder}:\n"]
+        with open(topic_file, "w") as f: ###[4]
+            f.write(f"{folder}:\n")
+            for _, filename, date, lecturers, topics in results:
+                line = f"{filename}: Date = {date}, Taught by {lecturers}, Covered {topics}\n"
+                f.write(line)
+                folder_compilation.append(line)
+        folder_compilation.append("---<END OF FOLDER>---\n")
+        compilation.append("".join(folder_compilation))
 
-with open("AllTopics.txt", "w") as f: ###[4]
-    f.write("\n".join(compilation))
-    
-print("Topics extracted :D")
+    with open("AllTopics.txt", "w") as f: ###[4]
+        f.write("\n".join(compilation))
 
 '''
 SOURCES:

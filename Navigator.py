@@ -81,14 +81,6 @@ def sort_by_date(files: list[File]):
     elif(r < len(right)): final += right[r:]
     return final
 
-folders = initialise_objects()
-intros = search_by_topic(folders, "Introduction")
-for intro in intros:
-    print(intro)
-print()
-for intro in sort_by_date(intros):
-    print(intro)
-
 '''
 [1] - W3Schools <https://www.geeksforgeeks.org/python/read-a-file-line-by-line-in-python/> Accessed on 09/10/2025
 '''
