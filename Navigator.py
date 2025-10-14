@@ -23,7 +23,7 @@ class Folder:
         self.files.append(file)
 
 def initialise_objects():
-    folders = []
+    folders = {}
     cur_folder = None
     state = "new_folder"
     with open("AllTopics.txt", 'r') as f: ###[1]
@@ -32,7 +32,6 @@ def initialise_objects():
             match state:
                 case "new_folder":
                     cur_folder = Folder(line[:-1])
-                    folders.append(cur_folder)
                     state = "new_file"
                 case "new_file":
                     if(line == "---<END OF FOLDER>---"):
@@ -48,6 +47,7 @@ def initialise_objects():
                     new_file = File(filename, date, lecturers, topics)
                     cur_folder.add_file(new_file)
                 case "end_of_folder":
+                    folders[cur_folder.foldername] = cur_folder
                     state = "new_folder"
     return folders
 
