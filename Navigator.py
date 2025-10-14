@@ -1,19 +1,32 @@
 import time
 
 class File:
-    def __init__(self, filename: str, date: str, lecturers: list[str], topics: list[str]):
+    def __init__(self, foldername: str, filename: str, date: str, lecturers: list[str], topics: list[str]):
+        self.foldername = foldername
         self.filename = filename
         self.date = date
         self.comp_date = time.strptime(date, "%d/%m/%Y")
-        self.lecturers = tuple(lecturers)
-        self.topics = tuple(topics)
+        self.lecturers = set(lecturers)
+        self.topics = set(topics)
 
     def __str__(self) -> str:
-        return f"{self.filename}: {str(self.date)} - {self.lecturers}, {self.topics}"
+        return f"{self.foldername}/{self.filename}: {str(self.date)} - {self.lecturers}, {self.topics}"
+    
+    def validate_file(self, topic_filters: set, lecturer_filters: set) -> bool:
+        topic_valid = True
+        if(topic_filters): #If there are filters [abusing truthy values]
+            topic_intesection = self.topics.intersection(topic_filters)
+            topic_valid = bool(topic_intesection)
+        lecturer_valid = True
+        if(lecturer_filters):
+            lecturer_intersection = self.lecturers.intersection(lecturer_filters)
+            lecturer_valid = bool(lecturer_intersection)
+        return topic_valid and lecturer_valid
 
 class Folder:
     def __init__(self, foldername: str):
         self.foldername = foldername
+        self.hidden = False
         self.files = []
 
     def __str__(self) -> str:
@@ -21,6 +34,14 @@ class Folder:
 
     def add_file(self, file:File):
         self.files.append(file)
+
+    def search(self, topic_filters: set, lecturer_filters: set) -> list[File]:
+        if(self.hidden): return
+        results = []
+        for file in self.files:
+            if(not file.validate_file(topic_filters, lecturer_filters)): continue
+            results.append(file)
+        return results
 
 def initialise_objects():
     folders = {}
@@ -32,6 +53,7 @@ def initialise_objects():
             match state:
                 case "new_folder":
                     cur_folder = Folder(line[:-1])
+                    folders[cur_folder.foldername] = cur_folder
                     state = "new_file"
                 case "new_file":
                     if(line == "---<END OF FOLDER>---"):
@@ -44,19 +66,11 @@ def initialise_objects():
                     raw_lecturers, line = line[:list_end], line[list_end + 12:-1]
                     lecturers = [x[1:-1] for x in raw_lecturers.split(", ")]
                     topics = [x[1:-1] for x in line.split(", ")]
-                    new_file = File(filename, date, lecturers, topics)
+                    new_file = File(cur_folder.foldername, filename, date, lecturers, topics)
                     cur_folder.add_file(new_file)
                 case "end_of_folder":
-                    folders[cur_folder.foldername] = cur_folder
                     state = "new_folder"
     return folders
-
-#Complex searches can be done by ANDing multiple single search results
-def search_by_topic(folders: list[Folder], topic: str) -> list[File]:
-    results = []
-    for folder in folders:
-        results += [file for file in folder.files if topic in file.topics]
-    return results
 
 #This is just merge sort but on files.comp_date
 def sort_by_date(files: list[File]):
