@@ -9,8 +9,17 @@ class File:
         self.lecturers = set(lecturers)
         self.topics = set(topics)
 
+    #DEBUG/CLI Method
     def __str__(self) -> str:
         return f"{self.foldername}/{self.filename}: {str(self.date)} - {self.lecturers}, {self.topics}"
+    
+    #Just for interfacing sake#
+    def get_lecturers(self) -> set:
+        return self.lecturers
+    
+    def get_topics(self) -> set:
+        return self.topics
+    #Just for interfacing sake#
     
     def validate_file(self, topic_filters: set, lecturer_filters: set) -> bool:
         topic_valid = True
@@ -29,6 +38,7 @@ class Folder:
         self.hidden = False
         self.files = []
 
+    #DEBUG/CLI Method
     def __str__(self) -> str:
         return self.foldername + ":\n" + "\n".join([str(file) for file in self.files])
 
@@ -72,8 +82,17 @@ def initialise_objects():
                     state = "new_folder"
     return folders
 
-#This is just merge sort but on files.comp_date
-def sort_by_date(files: list[File]):
+#This is just merge sort but on file.comp_date or file.foldername
+def sort_wrapper(style: str, files: list[File], ascending = True) -> list[File]:
+    if(style == "Date"):
+        results = sort_by_date(files)
+    else:
+        results = sort_by_folder(files)
+    
+    if(ascending): return results
+    return results[::-1]
+
+def sort_by_date(files: list[File]) -> list[File]:
     length = len(files)
     if(length == 1):
         return files
@@ -86,6 +105,28 @@ def sort_by_date(files: list[File]):
     final = []
     while l < len(left) and r < len(right):
         if(left[l].comp_date <= right[r].comp_date):
+            final.append(left[l])
+            l += 1
+        else:
+            final.append(right[r])
+            r += 1
+    if(l < len(left)): final += left[l:]
+    elif(r < len(right)): final += right[r:]
+    return final
+
+def sort_by_folder(files: list[File]) -> list[File]:
+    length = len(files)
+    if(length == 1):
+        return files
+    elif(length == 2):
+        if(files[0].foldername < files[1].foldername): return files
+        return files[::-1]
+    mid = length // 2
+    left, right = sort_by_date(files[:mid]), sort_by_date(files[mid:])
+    l = r = 0
+    final = []
+    while l < len(left) and r < len(right):
+        if(left[l].foldername <= right[r].foldername):
             final.append(left[l])
             l += 1
         else:
