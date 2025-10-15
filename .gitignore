@@ -3,3 +3,4 @@ B/
 __pycache__/
 *.docx
 *.txt
+temp.py
