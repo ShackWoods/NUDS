@@ -1,4 +1,5 @@
 import TopicParser
+import TaskParser
 import UserInterface
 
 
@@ -10,6 +11,8 @@ D* - by Date*
 F* - by Folder*
 *A - Ascending*
 *D - Descending*
+
+TODO - Parse for any unattended Post-Reading Tasks
 
 EXIT - End the program
 LOAD - Load a file (append exact filename)*
@@ -27,6 +30,7 @@ TF - Toggle folder
 def main():
     TopicParser.extract_topics()
     ui = UserInterface.UI()
+    TaskParser.extract_tasklists(ui.folders)
 
     running = True
     while running:
@@ -39,6 +43,8 @@ def main():
                 ui.display_info(operand)
             case "LOAD": #Load the given file
                 ui.load_file(operand)
+            case "TODO": #Show all tasks you need to do
+                TaskParser.announce_tasks()
             case "EXIT": #Exit the program
                 running = False
             case "LL": #List lecturers

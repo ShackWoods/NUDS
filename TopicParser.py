@@ -13,7 +13,7 @@ def get_files(folder: str) -> list:
 def parse_files(folder: str) -> list:
     files = get_files(folder)
     results = []
-    sections = ["Pre-Reading","Notes","Exercises","Post-Reading","References"]
+    sections = ["Pre-Reading","Notes","Exercises","<TO DO>","Post-Reading","References"]
     for file in files:
         filename = file.split("\\")[1][:-5]
         content = docx2txt.process(file) ###[1]
