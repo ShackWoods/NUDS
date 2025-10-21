@@ -15,19 +15,33 @@ def parse_files(folder: str) -> list:
     results = []
     sections = ["Pre-Reading","Notes","Exercises","<TO DO>","Post-Reading","References"]
     for file in files:
-        filename = file.split("\\")[1][:-5]
+        nickname = file[:-5]
+        filename = nickname.split("\\")[1]
         content = docx2txt.process(file) ###[1]
         for section in sections:
             content = content.split(section)[0]
-        header, topic_line = content.split("<Covered Topics>")
-        clean_date_line, lecturer_line = header.split(" | ")
         try:
-            clean_lecture_line = lecturer_line.split(" - ")[1]
+            header, topic_line = content.split("<Covered Topics>")
         except:
-            clean_lecture_line = lecturer_line.split(" – ")[1]
+            print(f"'{nickname}' needs the tag '<Covered Topics>'")
+        try:
+            clean_date_line, lecturer_line = header.split(" | ")
+        except:
+            print(f"'{nickname}' only has one section")
+            continue
+        split = max(lecturer_line.find(" - "), lecturer_line.find(" – "))
+        if(split < 0):
+            print(f"'{nickname}' doesn't have a lecturer/subject")
+            continue
+        clean_lecture_line = lecturer_line[split+3:]
         lecturers = clean_lecture_line.split(", ")
         lecturers[-1] = lecturers[-1][:-2]
-        date_val = strptime(clean_date_line, "%d/%m/%Y") ###[2]
+
+        try:
+            date_val = strptime(clean_date_line, "%d/%m/%Y") ###[2]
+        except:
+            print(f"'{nickname}' has an invalid date")
+            continue
         clean_topic_line = topic_line.replace("\n","")
         topics = clean_topic_line.split(", ")
         results.append((date_val, filename, clean_date_line, lecturers, topics))
