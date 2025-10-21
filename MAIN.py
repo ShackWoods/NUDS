@@ -40,7 +40,7 @@ def main():
         operand = " ".join(splits[1:])
         match command:
             case "SHOW": #Show the current valid files
-                ui.display_info(operand)
+                ui.display_info(operand.upper())
             case "LOAD": #Load the given file
                 ui.load_file(operand)
             case "TODO": #Show all tasks you need to do

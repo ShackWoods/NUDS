@@ -15,7 +15,11 @@ class UI:
                 self.all_lecturers = self.all_lecturers.union(file.get_lecturers())
 
     def load_file(self, filename: str):
-        folder, file = filename.split("/")
+        try:
+            folder, file = filename.split("/")
+        except:
+            print(f"{filename} is not a file - did you include a /?")
+            return
 
         known_folders = self.folders.keys()
         if(folder not in known_folders):
@@ -64,16 +68,15 @@ class UI:
             folder = self.folders[foldername]
             valid_files += folder.search(self.topic_filters, self.lecturer_filters)
 
-        #Just temporarily doing stuff
         match sort_mode:
             case "DA": #by date, ascending
-                sorted_files = Navigator.sort_wrapper("Date", valid_files)
+                sorted_files = Navigator.sort_by_date(valid_files)
             case "DD": #by date, descending
-                sorted_files = Navigator.sort_wrapper("Date", valid_files, ascending=False)
+                sorted_files = Navigator.sort_by_date(valid_files, ascending=False)
             case "FA": #by fodler, ascending
-                sorted_files = Navigator.sort_wrapper("Folder", valid_files)
+                sorted_files = Navigator.sort_by_folder(valid_files)
             case "FD": #by folder, descending
-                sorted_files = Navigator.sort_wrapper("Folder", valid_files, ascending=False)
+                sorted_files = Navigator.sort_by_folder(valid_files, ascending=False)
             case _:
                 sorted_files = valid_files
         for file in sorted_files:

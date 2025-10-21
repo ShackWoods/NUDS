@@ -82,16 +82,14 @@ def initialise_objects():
                     state = "new_folder"
     return folders
 
-#This is just merge sort but on file.comp_date or file.foldername
-def sort_wrapper(style: str, files: list[File], ascending = True) -> list[File]:
-    if(style == "Date"):
-        results = sort_by_date(files)
-    else:
-        results = sort_by_folder(files)
-    
-    if(ascending): return results
-    return results[::-1]
+def sort_wrapper(sort_function):
+    def wrap(files: list[File], ascending = True) -> list[File]:
+        sorted_list = sort_function(files)
+        if(ascending): return sorted_list
+        return sorted_list[::-1]
+    return wrap
 
+@sort_wrapper
 def sort_by_date(files: list[File]) -> list[File]:
     length = len(files)
     if(length == 1):
@@ -114,6 +112,7 @@ def sort_by_date(files: list[File]) -> list[File]:
     elif(r < len(right)): final += right[r:]
     return final
 
+@sort_wrapper
 def sort_by_folder(files: list[File]) -> list[File]:
     length = len(files)
     if(length == 1):
