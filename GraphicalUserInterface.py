@@ -21,6 +21,27 @@ class BOX(Sprite):
         img.fill(self.colour)
         super().__init__(img, x*100, y*100)
 
+class Button: #BOX is the visual component
+    def __init__(self, myBOX: BOX, action, *args):
+        self.box = myBOX
+        self.state = "inactive"
+        self.action = action
+        self.args = args
+
+    def clicked(self, mouse_position: list, mouse_down: bool):
+        if(not self.box.rect.collidepoint(mouse_position)):
+            self.state = "inactive"
+            return
+        
+        match self.state:
+            case "inactive":
+                self.state = "focussed"
+            case "focussed":
+                self.action(self.args)
+
+    def get_position(self) -> tuple[int]:
+        return (self.box.rect.left, self.box.rect.top)
+
 class ListBox:
     def __init__(self, boxes: list[BOX]):
         self.boxes = [[box,True] for box in boxes]
