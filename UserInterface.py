@@ -30,9 +30,9 @@ class UI:
             real_filename = real_file.filename
             if(file.upper() != real_filename.upper()):
                 continue
-            source_path = os.getcwd() ###[1]
+            source_path = os.getcwd()
             file_path = source_path + "/" + folder + "/" + real_filename + ".docx"
-            os.startfile(file_path) ###[2]
+            os.startfile(file_path)
             return
         print(f"'{file}' is not a file in '{folder}'")
         return
@@ -45,7 +45,7 @@ class UI:
         for topic in self.all_topics:
             print(topic)
                 
-    #Can these filters be merged
+    #Good practice to not merge
     def add_topic_filter(self, filter: str):
         self.topic_filters.add(filter)
 
@@ -81,8 +81,3 @@ class UI:
                 sorted_files = valid_files
         for file in sorted_files:
             print(file)
-
-'''
-[1] - geeksforgeeks <https://www.geeksforgeeks.org/python/get-current-directory-python/> Accessed on 10/10/2025
-[2] - Nick on stackoverflow <https://stackoverflow.com/questions/434597/open-document-with-default-os-application-in-python-both-in-windows-and-mac-os> Accessed on 15/10/2025
-'''
