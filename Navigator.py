@@ -57,7 +57,7 @@ def initialise_objects():
     folders = {}
     cur_folder = None
     state = "new_folder"
-    with open("AllTopics.txt", 'r') as f: ###[1]
+    with open("AllTopics.txt", 'r') as f:
         for line in f:
             line = line.strip()
             match state:
@@ -134,7 +134,3 @@ def sort_by_folder(files: list[File]) -> list[File]:
     if(l < len(left)): final += left[l:]
     elif(r < len(right)): final += right[r:]
     return final
-
-'''
-[1] - W3Schools <https://www.geeksforgeeks.org/python/read-a-file-line-by-line-in-python/> Accessed on 09/10/2025
-'''
