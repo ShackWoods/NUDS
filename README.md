@@ -72,3 +72,4 @@ FILTERS - use the below commands, appending the name of the topic/lecturer/folde
 1) I didn't want to spend £50 to share Obsidian files across my devices
 2) To provide some more practice with coding in python
 3) To practice using git for version control
+4) To learn good programming practices
