@@ -1,6 +1,6 @@
-import docx2txt ###[1]
+import docx2txt
 from glob import glob
-from time import strptime ###[2]
+from time import strptime
 
 def get_folders() -> list:
     files = glob("*")
@@ -17,7 +17,7 @@ def parse_files(folder: str) -> list:
     for file in files:
         nickname = file[:-5]
         filename = nickname.split("\\")[1]
-        content = docx2txt.process(file) ###[1]
+        content = docx2txt.process(file)
         for section in sections:
             content = content.split(section)[0]
         try:
@@ -38,14 +38,14 @@ def parse_files(folder: str) -> list:
         lecturers[-1] = lecturers[-1][:-2]
 
         try:
-            date_val = strptime(clean_date_line, "%d/%m/%Y") ###[2]
+            date_val = strptime(clean_date_line, "%d/%m/%Y")
         except:
             print(f"'{nickname}' has an invalid date")
             continue
         clean_topic_line = topic_line.replace("\n","")
         topics = clean_topic_line.split(", ")
         results.append((date_val, filename, clean_date_line, lecturers, topics))
-    results.sort(key=lambda x: x[0]) ###[3]
+    results.sort(key=lambda x: x[0])
     return results
 
 def extract_topics():
@@ -56,7 +56,7 @@ def extract_topics():
         results = parse_files(folder)
         topic_file = f"{folder}/Topics.txt"
         folder_compilation = [f"{folder}:\n"]
-        with open(topic_file, "w") as f: ###[4]
+        with open(topic_file, "w") as f:
             f.write(f"{folder}:\n")
             for _, filename, date, lecturers, topics in results:
                 line = f"{filename}: Date = {date}, Taught by {lecturers}, Covered {topics}\n"
@@ -65,13 +65,5 @@ def extract_topics():
         folder_compilation.append("---<END OF FOLDER>---\n")
         compilation.append("".join(folder_compilation))
 
-    with open("AllTopics.txt", "w") as f: ###[4]
+    with open("AllTopics.txt", "w") as f:
         f.write("\n".join(compilation))
-
-'''
-SOURCES:
-[1] - Billal BEGUERADJ on stackoverflow <https://stackoverflow.com/questions/36001482/read-doc-file-with-python>, Accessed on 08/10/2025
-[2] - Guillermo Pereira on stackoverflow <https://stackoverflow.com/questions/8142364/how-to-compare-two-dates>, Accessed on 08/10/2025
-[3] - mouad on stackoverflow <https://stackoverflow.com/questions/4174941/how-to-sort-a-list-of-lists-by-a-specific-index-of-the-inner-list>, Accessed on 08/10/2025
-[4] - W3Schools <https://www.w3schools.com/python/python_file_write.asp>, Accessed on 08/10/2025
-'''
